@@ -1,145 +1,221 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Race Timer App</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <style>
-    .hidden {
-      display: none;
-    }
-    #timer-display {
-      font-size: 1.5rem;
-      font-weight: bold;
-    }
-    .disabled-button {
-      pointer-events: none;
-      opacity: 0.6;
-    }
-  </style>
-</head>
-<body class="bg-light">
-
-  <div class="container mt-5">
-    <div class="text-center">
-      <h1>Race Timer</h1>
-      <p class="text-muted">Manage your race rounds easily!</p>
-    </div>
-
-    <!-- Start Race Section -->
-    <div id="start-race-section" class="text-center mt-4">
-      <button id="start-race-button" class="btn btn-primary btn-lg">Start Race</button>
-    </div>
-
-    <!-- Race Timer & Rounds Section -->
-    <div id="race-section" class="hidden mt-4">
-      <!-- Timer Input -->
-      <div class="text-center">
-        <label for="race-timer" class="form-label">Race Time (minutes):</label>
-        <input id="race-timer" type="number" class="form-control d-inline-block w-25" placeholder="Enter minutes">
-      </div>
-
-      <!-- Timer and Controls -->
-      <div class="text-center mt-3">
-        <button id="start-timer-button" class="btn btn-warning">Start Timer</button>
-        <div id="timer-display" class="mt-3 text-danger"></div>
-      </div>
-
-      <!-- Round Controls -->
-      <div class="mt-3 text-center">
-        <button id="plus-button" class="btn btn-success disabled-button">+</button>
-        <button id="minus-button" class="btn btn-danger disabled-button">-</button>
-      </div>
-
-      <!-- Rounds List -->
-      <div id="rounds-list" class="mt-4">
-        <h4>Rounds:</h4>
-        <ul id="rounds" class="list-group"></ul>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    const startRaceButton = document.getElementById('start-race-button');
-    const raceSection = document.getElementById('race-section');
-    const plusButton = document.getElementById('plus-button');
-    const minusButton = document.getElementById('minus-button');
-    const startTimerButton = document.getElementById('start-timer-button');
-    const raceTimerInput = document.getElementById('race-timer');
-    const timerDisplay = document.getElementById('timer-display');
-    const roundsList = document.getElementById('rounds');
-    let roundCounter = 0;
-    let timerInterval;
-    let timeLeft;
-
-    // Show race section when the race is started
-    startRaceButton.addEventListener('click', () => {
-      startRaceButton.parentElement.classList.add('hidden');
-      raceSection.classList.remove('hidden');
-    });
-
-    // Add a new round with its timestamp
-    plusButton.addEventListener('click', () => {
-      if (timeLeft > 0) {
-        roundCounter++;
-        const roundTime = Math.floor(timeLeft / 60) + ':' + (timeLeft % 60).toString().padStart(2, '0');
-        const roundItem = document.createElement('li');
-        roundItem.classList.add('list-group-item');
-        roundItem.textContent = `Round ${roundCounter} - Time Remaining: ${roundTime}`;
-        roundItem.id = `round-${roundCounter}`;
-        roundsList.appendChild(roundItem);
-      }
-    });
-
-    // Remove the last round
-    minusButton.addEventListener('click', () => {
-      if (roundCounter > 0) {
-        const lastRound = document.getElementById(`round-${roundCounter}`);
-        lastRound.remove();
-        roundCounter--;
-      }
-    });
-
-    // Start the timer
-    startTimerButton.addEventListener('click', () => {
-      const raceTime = parseInt(raceTimerInput.value);
-      if (isNaN(raceTime) || raceTime <= 0) {
-        alert('Please enter a valid race time (in minutes).');
-        return;
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Schule-Tools</title>
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        background-color: #f8f9fa;
+        font-family: "Arial", sans-serif;
       }
 
-      // Enable the add and delete buttons during the race
-      plusButton.classList.remove('disabled-button');
-      minusButton.classList.remove('disabled-button');
+      h1,
+      h2 {
+        color: #343a40;
+      }
 
-      // Convert minutes to seconds for the countdown
-      timeLeft = raceTime * 60;
+      .card {
+        border: none;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s ease-in-out;
+      }
 
-      // Clear any existing timer
-      if (timerInterval) clearInterval(timerInterval);
+      .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+      }
 
-      // Start countdown
-      timerInterval = setInterval(() => {
-        const minutes = Math.floor(timeLeft / 60);
-        const seconds = timeLeft % 60;
+      .card-title {
+        color: #495057;
+        font-size: 1.25rem;
+      }
 
-        // Update timer display
-        timerDisplay.textContent = `Time Left: ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+      .card-text {
+        color: #6c757d;
+      }
 
-        // Check if time is up
-        if (timeLeft <= 0) {
-          clearInterval(timerInterval);
-          timerDisplay.textContent = 'Race Over!';
-          plusButton.classList.add('disabled-button');
-          minusButton.classList.add('disabled-button');
+      footer {
+        margin-top: 3rem;
+        text-align: center;
+        padding: 1rem 0;
+        background-color: #343a40;
+        color: #fff;
+      }
+
+      /* Button-53 Styling */
+      .button-53 {
+        background-color: #3dd1e7;
+        border: 0 solid #e5e7eb;
+        box-sizing: border-box;
+        color: #000000;
+        display: flex;
+        font-family: ui-sans-serif, system-ui, -apple-system, system-ui,
+          "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
+          "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+          "Noto Color Emoji";
+        font-size: 1rem;
+        font-weight: 700;
+        justify-content: center;
+        line-height: 1.75rem;
+        padding: 0.75rem 1.65rem;
+        position: relative;
+        text-align: center;
+        text-decoration: none #000000 solid;
+        text-decoration-thickness: auto;
+        width: 100%;
+        max-width: 460px;
+        position: relative;
+        cursor: pointer;
+        transform: rotate(-2deg);
+        user-select: none;
+        -webkit-user-select: none;
+        touch-action: manipulation;
+      }
+
+      .button-53:focus {
+        outline: 0;
+      }
+
+      .button-53:after {
+        content: "";
+        position: absolute;
+        border: 1px solid #000000;
+        bottom: 4px;
+        left: 4px;
+        width: calc(100% - 1px);
+        height: calc(100% - 1px);
+      }
+
+      .button-53:hover:after {
+        bottom: 2px;
+        left: 2px;
+      }
+
+      @media (min-width: 768px) {
+        .button-53 {
+          padding: 0.75rem 3rem;
+          font-size: 1.25rem;
         }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container my-5">
+      <h1 class="text-center mb-4">Schultools</h1>
+      <h2 class="text-center mb-4">Unterrichtsmaterial</h2>
+      <div class="row row-cols-1 row-cols-md-3 g-4">
+        <!-- Card 1 -->
+        <div class="col">
+          <div class="card h-100">
+            <img
+              src="images/smart_car.webp"
+              class="card-img-top"
+              alt="WPU Smart Image"
+            />
+            <div class="card-body">
+              <h5 class="card-title">WPU Smart</h5>
+              <p class="card-text">
+                WPU Smart 2024/25 - Autonomfahrendes Auto Unterrichtsmaterial
+              </p>
+            </div>
+            <div class="card-footer bg-white border-0 text-center">
+              <a
+                href="https://niklasthielking.craft.me/autonomauto"
+                class="button-53"
+                role="button"
+                >Los geht's</a
+              >
+            </div>
+          </div>
+        </div>
+        <!-- Card 2 -->
+        <div class="col">
+          <div class="card h-100">
+            <img
+              src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8ZnJlZSUyMGltYWdlcyUyMGFpfGVufDB8fDB8fHww"
+              class="card-img-top"
+              alt="Informatik KI Image"
+            />
+            <div class="card-body">
+              <h5 class="card-title">Informatik KI</h5>
+              <p class="card-text">Informatik KI Jg. 10 Unterrichtsmaterial</p>
+            </div>
+            <div class="card-footer bg-white border-0 text-center">
+              <a
+                href="https://niklasthielking.craft.me/ki"
+                class="button-53"
+                role="button"
+                >Los geht's</a
+              >
+            </div>
+          </div>
+        </div>
+        <!-- Card 3 -->
 
-        timeLeft--;
-      }, 1000);
-    });
-  </script>
-
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-</body>
+        <div class="col">
+          <div class="card h-100">
+            <img
+              src="        https://images.unsplash.com/photo-1603297430188-4d30d6154151?q=80&w=3540&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D
+              "
+              class="card-img-top"
+              alt="Informatik KI Image"
+            />
+            <div class="card-body">
+              <h5 class="card-title">Sport - Kämpfen</h5>
+              <p class="card-text">
+                Sport - Kämpfen Jg. 5-13 Unterrichtsmaterial
+              </p>
+            </div>
+            <div class="card-footer bg-white border-0 text-center">
+              <a
+                href="https://niklasthielking.craft.me/Kaempfen"
+                class="button-53"
+                role="button"
+                >Mehr lesen</a
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+      <h2 class="text-center my-5">Weitere Tools</h2>
+      <div class="row row-cols-1 row-cols-md-3 g-4">
+        <!-- Card 1 -->
+        <div class="col">
+          <div class="card h-100">
+            <img
+              src="https://images.unsplash.com/photo-1518549223891-a997ef942a35?q=80&w=3725&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+              class="card-img-top"
+              alt="Lauf-Timer"
+            />
+            <div class="card-body">
+              <h5 class="card-title">Lauf-Timer</h5>
+              <p class="card-text">
+                Kleine App zum Aufzeichnen von Läufen und Runden.
+              </p>
+            </div>
+            <div class="card-footer bg-white border-0 text-center">
+              <a
+                href="/racetimer/racetimer.html"
+                class="button-53"
+                role="button"
+                >Jetzt stoppen</a
+              >
+            </div>
+          </div>
+        </div>
+        <!-- Card 2 -->
+      </div>
+    </div>
+    <footer>&copy; 2025 Schule-Tools. All Rights Reserved.</footer>
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
 </html>
