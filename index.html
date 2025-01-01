@@ -48,7 +48,6 @@
         padding: 1rem 0;
         background-color: #c7c8c9;
         color: #000;
-      
       }
 
       /* Button-53 Styling */
@@ -106,12 +105,89 @@
           font-size: 1.25rem;
         }
       }
+
+      .heading-52 {
+        font-size: 32px; /* Adjusted for larger heading size */
+        font-weight: 500;
+        letter-spacing: 1px;
+        padding: 13px 20px 13px;
+        outline: 0;
+        border: 1px solid black;
+        /* cursor: pointer; */
+        position: relative;
+        background-color: rgba(0, 0, 0, 0);
+        user-select: none;
+        -webkit-user-select: none;
+        touch-action: manipulation;
+      }
+
+      .heading-52:after {
+        content: "";
+        background-color: #ffe54c;
+        width: 100%;
+        z-index: -1;
+        position: absolute;
+        height: 100%;
+        top: 7px;
+        left: 7px;
+        transition: 0.2s;
+      }
+
+      /* .heading-52:hover:after {
+        top: 0px;
+        left: 0px;
+      } */
+
+      @media (min-width: 768px) {
+        .heading-52 {
+          padding: 13px 50px 13px;
+        }
+      }
+
+      .heading-52-new {
+        font-size: 32px; /* Adjusted for larger heading size */
+        font-weight: 500;
+        letter-spacing: 1px;
+        padding: 13px 20px 13px;
+        outline: 0;
+        border: 1px solid black;
+        cursor: pointer;
+        position: relative;
+        background-color: rgba(0, 0, 0, 0);
+        user-select: none;
+        -webkit-user-select: none;
+        touch-action: manipulation;
+      }
+
+      .heading-52-new:after {
+        content: "";
+        background-color: #ff4ce7; /* Updated color */
+        width: 100%;
+        z-index: -1;
+        position: absolute;
+        height: 100%;
+        top: 7px;
+        left: 7px;
+        transition: 0.2s;
+      }
+
+      .heading-52-new:hover:after {
+        top: 0px;
+        left: 0px;
+      }
+
+      @media (min-width: 768px) {
+        .heading-52-new {
+          padding: 13px 50px 13px;
+        }
+      }
     </style>
   </head>
   <body>
     <div class="container my-5">
-      <h1 class="text-center mb-4">Schultools</h1>
-      <h2 class="text-center mb-4">Unterrichtsmaterial</h2>
+      <h1 class="text-center mb-4">schule. tools. unterrichtsmaterial.</h1>
+      <h2 class="text-center mb-4 heading-52">unterrichtsmaterial.</h2>
+
       <div class="row row-cols-1 row-cols-md-3 g-4">
         <!-- Card 1 -->
         <div class="col">
@@ -186,7 +262,8 @@
           </div>
         </div>
       </div>
-      <h2 class="text-center my-5">Weitere Tools</h2>
+      <h2 class="text-center mb-4 heading-52-new my-5">tools.</h2>
+      <!-- <h2 class="text-center my-5">tools.</h2> -->
       <div class="row row-cols-1 row-cols-md-3 g-4">
         <!-- Card 1 -->
         <div class="col">
