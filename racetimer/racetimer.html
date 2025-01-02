@@ -166,7 +166,7 @@
       startTimerButton.addEventListener("click", () => {
         const raceTime = parseInt(raceTimerInput.value);
         if (isNaN(raceTime) || raceTime <= 0) {
-          alert("Please enter a valid race time (in minutes).");
+          alert("Bitte eine Zeit (in Minuten) eingeben.");
           return;
         }
 
@@ -183,7 +183,7 @@
           const seconds = timeLeft % 60;
 
           // Update Timer Display
-          timerDisplay.textContent = `Time Left: ${minutes}:${
+          timerDisplay.textContent = `Zeit übrig: ${minutes}:${
             seconds < 10 ? "0" : ""
           }${seconds}`;
 
@@ -194,7 +194,7 @@
           // Stop Timer at Zero
           if (timeLeft <= 0) {
             clearInterval(timerInterval);
-            timerDisplay.textContent = "Race Over!";
+            timerDisplay.textContent = "Rennen vorbei!";
             raceTimerInput.disabled = false;
             timerProgressBar.style.width = "100%";
           }
