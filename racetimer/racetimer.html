@@ -16,220 +16,153 @@
         font-size: 1.5rem;
         font-weight: bold;
       }
+      .runner-controls {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
       .disabled-button {
         pointer-events: none;
         opacity: 0.6;
+      }
+      .rounds-section {
+        margin-top: 30px;
+      }
+      .round-table {
+        width: 100%;
+        margin-top: 10px;
+        font-size: 0.9rem;
+      }
+      .round-table th,
+      .round-table td {
+        text-align: center;
       }
     </style>
   </head>
   <body class="bg-light">
     <div class="container mt-5">
       <div class="text-center">
-        <h1>Race Timer</h1>
-        <p class="text-muted">Manage your race rounds easily!</p>
-      </div>
-      <!-- Add Runners Section -->
-      <div class="text-center mt-4">
-        <button id="add-runner-button" class="btn btn-secondary">
-          Add Runner
-        </button>
+        <h1>Lauftimer</h1>
+        <p class="text-muted">Mehrere Läufer gleichzeitig stoppen!</p>
       </div>
 
-      <!-- Runner List -->
+      <!-- Timer Section -->
+      <div id="timer-section" class="text-center mt-4">
+        <label for="race-timer" class="form-label">Renndauer (Minuten):</label>
+        <input
+          id="race-timer"
+          type="number"
+          class="form-control d-inline-block w-25"
+          placeholder="Minuten eingeben"
+        />
+        <div>
+          <button id="start-timer-button" class="btn btn-warning mt-3">
+            Rennen starten
+          </button>
+        </div>
+
+        <div id="timer-display" class="mt-3 text-danger"></div>
+        <div class="progress mt-3" style="height: 20px">
+          <div
+            id="timer-progress"
+            class="progress-bar"
+            role="progressbar"
+            style="width: 0%"
+            aria-valuenow="0"
+            aria-valuemin="0"
+            aria-valuemax="100"
+          ></div>
+        </div>
+      </div>
+
+      <!-- Runner List Section -->
       <div id="runners-list" class="mt-4">
-        <h4>Runners:</h4>
+        <h4>Läufer:</h4>
         <ul id="runners" class="list-group"></ul>
-      </div>
-
-      <!-- Runner Details Section -->
-      <div id="runner-details" class="hidden mt-4">
-        <h5 id="runner-name"></h5>
-        <!-- Timer Input -->
-        <div class="text-center">
-          <label for="race-timer" class="form-label"
-            >Race Time (minutes):</label
-          >
-          <input
-            id="race-timer"
-            type="number"
-            class="form-control d-inline-block w-25"
-            placeholder="Enter minutes"
-          />
-        </div>
-        <!-- Timer and Controls -->
-        <div class="text-center mt-3">
-          <button id="start-timer-button" class="btn btn-warning">
-            Start Timer
+        <div class="text-center mt-4">
+          <button id="add-runner-button" class="btn btn-secondary">
+            Läufer hinzufügen
           </button>
-          <div id="timer-display" class="mt-3 text-danger"></div>
-          <div class="progress mt-3" style="height: 20px">
-            <div
-              id="timer-progress"
-              class="progress-bar"
-              role="progressbar"
-              style="width: 0%"
-              aria-valuenow="0"
-              aria-valuemin="0"
-              aria-valuemax="100"
-            ></div>
-          </div>
-        </div>
-        <!-- Round Controls -->
-        <div class="mt-3 text-center">
-          <button id="plus-button" class="btn btn-success disabled-button">
-            +
-          </button>
-          <button id="minus-button" class="btn btn-danger disabled-button">
-            -
-          </button>
-        </div>
-        <!-- Rounds List -->
-        <div id="rounds-list" class="mt-4">
-          <h4>Rounds:</h4>
-          <ul id="rounds" class="list-group"></ul>
         </div>
       </div>
 
-      <!-- Start Race Section -->
-      <div id="start-race-section" class="text-center mt-4">
-        <button id="start-race-button" class="btn btn-primary btn-lg">
-          Start Race
-        </button>
-      </div>
-      <!-- Race Timer & Rounds Section -->
-      <div id="race-section" class="hidden mt-4">
-        <!-- Timer Input -->
-        <div class="text-center">
-          <label for="race-timer" class="form-label"
-            >Race Time (minutes):</label
-          >
-          <input
-            id="race-timer"
-            type="number"
-            class="form-control d-inline-block w-25"
-            placeholder="Enter minutes"
-          />
-        </div>
-        <!-- Timer and Controls -->
-        <div class="text-center mt-3">
-          <button id="start-timer-button" class="btn btn-warning">
-            Start Timer
-          </button>
-          <div id="timer-display" class="mt-3 text-danger"></div>
-        </div>
-        <!-- Round Controls -->
-        <div class="mt-3 text-center">
-          <button id="plus-button" class="btn btn-success disabled-button">
-            +
-          </button>
-          <button id="minus-button" class="btn btn-danger disabled-button">
-            -
-          </button>
-        </div>
-        <!-- Rounds List -->
-        <div id="rounds-list" class="mt-4">
-          <h4>Rounds:</h4>
-          <ul id="rounds" class="list-group"></ul>
-        </div>
+      <!-- Rounds Section -->
+      <div id="rounds-section" class="rounds-section">
+        <h4>Runden:</h4>
+        <div id="runner-rounds-tables"></div>
       </div>
     </div>
+
     <script>
-      const addRunnerButton = document.getElementById("add-runner-button");
-      const runnersList = document.getElementById("runners");
-      const runnerDetailsSection = document.getElementById("runner-details");
-      const runnerNameDisplay = document.getElementById("runner-name");
+      // Get UI Elements
       const startTimerButton = document.getElementById("start-timer-button");
       const raceTimerInput = document.getElementById("race-timer");
       const timerDisplay = document.getElementById("timer-display");
       const timerProgressBar = document.getElementById("timer-progress");
-      const plusButton = document.getElementById("plus-button");
-      const minusButton = document.getElementById("minus-button");
-      const roundsList = document.getElementById("rounds");
+      const addRunnerButton = document.getElementById("add-runner-button");
+      const runnersList = document.getElementById("runners");
+      const runnerRoundsTables = document.getElementById(
+        "runner-rounds-tables"
+      );
 
+      // State Variables
       let runners = [];
-      let currentRunnerIndex = -1;
-      let roundCounter = 0;
       let timerInterval;
       let timeLeft;
       let totalTime;
 
+      // Add a Runner
       addRunnerButton.addEventListener("click", () => {
-        const runnerName = prompt("Enter Runner Name:");
+        const runnerName = prompt("Namen eingeben:");
         if (runnerName) {
           // Create a new runner
           const runner = {
             name: runnerName,
             rounds: [],
-            timer: {
-              timeLeft: 0,
-              totalTime: 0,
-              interval: null,
-            },
           };
           runners.push(runner);
 
-          // Add to the runners list UI
+          // Add Runner to List
           const runnerItem = document.createElement("li");
           runnerItem.classList.add("list-group-item");
-          runnerItem.textContent = runnerName;
-          runnerItem.addEventListener("click", () => loadRunner(runnerName));
+
+          // Create a container for runner name and buttons
+          const runnerControls = document.createElement("div");
+          runnerControls.classList.add("runner-controls");
+
+          // Runner Name Display
+          const runnerNameSpan = document.createElement("span");
+          runnerNameSpan.textContent = runnerName;
+
+          // Add Round Button
+          const addRoundButton = document.createElement("button");
+          addRoundButton.classList.add("btn", "btn-success", "btn-sm", "me-2");
+          addRoundButton.textContent = "+";
+          addRoundButton.addEventListener("click", () => addRound(runnerName));
+
+          // Remove Round Button
+          const removeRoundButton = document.createElement("button");
+          removeRoundButton.classList.add("btn", "btn-danger", "btn-sm");
+          removeRoundButton.textContent = "-";
+          removeRoundButton.addEventListener("click", () =>
+            removeRound(runnerName)
+          );
+
+          // Append buttons and name to controls
+          runnerControls.appendChild(runnerNameSpan);
+          runnerControls.appendChild(addRoundButton);
+          runnerControls.appendChild(removeRoundButton);
+
+          // Add controls to the runner item
+          runnerItem.appendChild(runnerControls);
           runnersList.appendChild(runnerItem);
+
+          // Create a separate rounds table for this runner
+          createRoundsTable(runnerName);
         }
       });
 
-      function loadRunner(runnerName) {
-        // Find the selected runner by name
-        const runner = runners.find((r) => r.name === runnerName);
-        currentRunnerIndex = runners.indexOf(runner);
-
-        // Display the runner details
-        runnerNameDisplay.textContent = `Runner: ${runnerName}`;
-        raceTimerInput.value = "";
-        timerDisplay.textContent = "";
-        roundsList.innerHTML = "";
-        timeLeft = 0;
-        totalTime = 0;
-        roundCounter = 0;
-
-        // Reset timer progress
-        timerProgressBar.style.width = "0%";
-        plusButton.classList.add("disabled-button");
-        minusButton.classList.add("disabled-button");
-
-        runnerDetailsSection.classList.remove("hidden");
-      }
-
-      // Add a new round with its timestamp for the current runner
-      plusButton.addEventListener("click", () => {
-        if (timeLeft > 0) {
-          roundCounter++;
-          const roundTime =
-            Math.floor(timeLeft / 60) +
-            ":" +
-            (timeLeft % 60).toString().padStart(2, "0");
-          const roundItem = document.createElement("li");
-          roundItem.classList.add("list-group-item");
-          roundItem.textContent = `Round ${roundCounter} - Time Remaining: ${roundTime}`;
-          roundsList.appendChild(roundItem);
-
-          // Save the round to the current runner
-          runners[currentRunnerIndex].rounds.push(roundTime);
-        }
-      });
-
-      // Remove the last round for the current runner
-      minusButton.addEventListener("click", () => {
-        if (roundCounter > 0) {
-          const lastRound = roundsList.lastElementChild;
-          lastRound.remove();
-          roundCounter--;
-
-          // Remove the round from the current runner's rounds
-          runners[currentRunnerIndex].rounds.pop();
-        }
-      });
-
-      // Start the timer for the current runner
+      // Start Timer
       startTimerButton.addEventListener("click", () => {
         const raceTime = parseInt(raceTimerInput.value);
         if (isNaN(raceTime) || raceTime <= 0) {
@@ -237,45 +170,105 @@
           return;
         }
 
-        // Enable the add and delete buttons during the race
-        plusButton.classList.remove("disabled-button");
-        minusButton.classList.remove("disabled-button");
+        // Disable Timer Input During Countdown
+        raceTimerInput.disabled = true;
 
-        // Set the timer for the current runner
+        // Set Timer
         timeLeft = raceTime * 60;
-        totalTime = timeLeft; // Save the total time for progress calculation
+        totalTime = timeLeft;
 
-        // Clear any existing timer
-        if (runners[currentRunnerIndex].timer.interval) {
-          clearInterval(runners[currentRunnerIndex].timer.interval);
-        }
-
-        // Start countdown
-        runners[currentRunnerIndex].timer.interval = setInterval(() => {
+        // Start Countdown
+        timerInterval = setInterval(() => {
           const minutes = Math.floor(timeLeft / 60);
           const seconds = timeLeft % 60;
 
-          // Update timer display
+          // Update Timer Display
           timerDisplay.textContent = `Time Left: ${minutes}:${
             seconds < 10 ? "0" : ""
           }${seconds}`;
 
-          // Update progress bar
+          // Update Progress Bar
           const progress = ((totalTime - timeLeft) / totalTime) * 100;
           timerProgressBar.style.width = `${progress}%`;
 
-          // Check if time is up
+          // Stop Timer at Zero
           if (timeLeft <= 0) {
-            clearInterval(runners[currentRunnerIndex].timer.interval);
+            clearInterval(timerInterval);
             timerDisplay.textContent = "Race Over!";
-            plusButton.classList.add("disabled-button");
-            minusButton.classList.add("disabled-button");
+            raceTimerInput.disabled = false;
             timerProgressBar.style.width = "100%";
           }
 
           timeLeft--;
         }, 1000);
       });
+
+      // Add Round for a Runner
+      function addRound(runnerName) {
+        const runner = runners.find((r) => r.name === runnerName);
+        if (runner && timeLeft > 0) {
+          const minutes = Math.floor(timeLeft / 60);
+          const seconds = timeLeft % 60;
+          const roundTime = `${minutes}:${seconds.toString().padStart(2, "0")}`;
+          runner.rounds.push(roundTime);
+
+          // Add round to this runner's table
+          const runnerTableBody = document.getElementById(
+            `rounds-table-body-${runnerName}`
+          );
+          const roundRow = document.createElement("tr");
+          roundRow.innerHTML = `
+            <td>${runner.rounds.length}</td>
+            <td>${roundTime}</td>
+          `;
+          runnerTableBody.appendChild(roundRow);
+        }
+      }
+
+      // Remove Last Round for a Runner
+      function removeRound(runnerName) {
+        const runner = runners.find((r) => r.name === runnerName);
+        if (runner && runner.rounds.length > 0) {
+          runner.rounds.pop();
+
+          // Remove the last row for this runner in their table
+          const runnerTableBody = document.getElementById(
+            `rounds-table-body-${runnerName}`
+          );
+          runnerTableBody.deleteRow(runnerTableBody.rows.length - 1);
+        }
+      }
+
+      // Create Rounds Table for a Runner
+      function createRoundsTable(runnerName) {
+        const tableContainer = document.createElement("div");
+        tableContainer.classList.add("mb-4");
+
+        const tableTitle = document.createElement("h5");
+        tableTitle.textContent = `Runden für ${runnerName}`;
+
+        const table = document.createElement("table");
+        table.classList.add("table", "table-bordered", "round-table");
+
+        const tableHead = document.createElement("thead");
+        tableHead.innerHTML = `
+          <tr>
+            <th>Runde</th>
+            <th>Zeit</th>
+          </tr>
+        `;
+
+        const tableBody = document.createElement("tbody");
+        tableBody.id = `rounds-table-body-${runnerName}`;
+
+        table.appendChild(tableHead);
+        table.appendChild(tableBody);
+
+        tableContainer.appendChild(tableTitle);
+        tableContainer.appendChild(table);
+
+        runnerRoundsTables.appendChild(tableContainer);
+      }
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   </body>
